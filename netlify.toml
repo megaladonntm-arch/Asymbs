@@ -1,6 +1,6 @@
 [build]
   base = "frontend"
-  command = "bash ./netlify-build.sh"
+  command = "sh ./netlify-build.sh"
   publish = "dist"
 
 [build.environment]
