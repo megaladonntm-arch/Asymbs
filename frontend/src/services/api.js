@@ -1,4 +1,4 @@
-﻿const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000"
+﻿const API_BASE = import.meta.env.VITE_API_BASE || "https://anon-messenger-backend-production-7c1a.up.railway.app"
 
 export async function register(username, password) {
   const res = await fetch(`${API_BASE}/register`, {

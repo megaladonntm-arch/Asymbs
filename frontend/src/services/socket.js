@@ -1,4 +1,4 @@
-﻿const WS_BASE = import.meta.env.VITE_WS_BASE || "ws://localhost:8000"
+﻿const WS_BASE = import.meta.env.VITE_WS_BASE || "wss://anon-messenger-backend-production-7c1a.up.railway.app"
 
 export function createSocket(username, token, onMessage, onStatus, onTyping) {
   const ws = new WebSocket(`${WS_BASE}/chat/${encodeURIComponent(username)}?token=${encodeURIComponent(token)}`)
