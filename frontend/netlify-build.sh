@@ -1,4 +1,4 @@
-﻿#!/bin/sh
+#!/bin/sh
 set -eu
 
 NODE_VERSION="${NODE_VERSION:-20.11.1}"
@@ -14,4 +14,4 @@ npm --version
 node --version
 
 npm install
-npm run build
+node ./node_modules/vite/bin/vite.js build
