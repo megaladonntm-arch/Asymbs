@@ -6,6 +6,7 @@
 [build.environment]
   VITE_API_BASE = "https://YOUR-RENDER-URL.onrender.com"
   VITE_WS_BASE = "wss://YOUR-RENDER-URL.onrender.com"
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"

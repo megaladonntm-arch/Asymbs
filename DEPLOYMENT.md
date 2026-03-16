@@ -1,35 +1,30 @@
-﻿BACKEND
-1) Render
-- Create a new Web Service.
-- Root directory: backend
-- Build command: pip install -r requirements.txt
-- Start command: uvicorn main:app --host 0.0.0.0 --port $PORT
-
-Environment variables (Render dashboard):
-- SECRET_KEY: set a strong random value
+﻿BACKEND (Railway)
+1) Create a new Railway project and deploy from this repo.
+2) Railway will detect `railway.json` and `Dockerfile` automatically.
+3) Set Environment Variables in Railway:
+- SECRET_KEY (required)
 - ACCESS_TOKEN_EXPIRE_MINUTES=120
 - MESSAGE_TTL_SECONDS=3600
 - FILE_TTL_SECONDS=3600
 - MAX_UPLOAD_BYTES=104857600
 - CLEANUP_INTERVAL_SECONDS=300
-- DATABASE_URL (optional): use Render Postgres for persistence
+- DATABASE_URL (optional, use Railway Postgres for persistence)
 
 Notes:
-- If you keep SQLite, data resets on deploy/restart. Use Postgres for real data.
+- SQLite on Railway is ephemeral. Use Railway Postgres for real data.
 
-FRONTEND
-1) Netlify
-- Create a new site from repo.
-- Base directory: frontend
-- Build command: npm install && npm run build
-- Publish directory: dist
+FRONTEND (Netlify)
+1) Create a new site from repo.
+2) Base directory: frontend
+3) Build command: npm install && npm run build
+4) Publish directory: dist
 
 Environment variables (Netlify dashboard):
-- VITE_API_BASE=https://YOUR-RENDER-URL.onrender.com
-- VITE_WS_BASE=wss://YOUR-RENDER-URL.onrender.com
+- VITE_API_BASE=https://YOUR-RAILWAY-URL.up.railway.app
+- VITE_WS_BASE=wss://YOUR-RAILWAY-URL.up.railway.app
 
 Routing:
-- netlify.toml already includes SPA redirect to /index.html.
+- netlify.toml includes SPA redirect to /index.html.
 
 LOCAL DEV
 Backend:
