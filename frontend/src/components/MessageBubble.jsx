@@ -17,7 +17,8 @@ function isVideo(name) {
 export default function MessageBubble({ message, isOwn }) {
   const file = parseFile(message)
   const token = localStorage.getItem("token")
-  const downloadUrl = file ? `http://localhost:8000/files/${file.id}?token=${encodeURIComponent(token || "")}` : null
+  const apiBase = import.meta.env.VITE_API_BASE || "http://localhost:8000"
+  const downloadUrl = file ? `${apiBase}/files/${file.id}?token=${encodeURIComponent(token || "")}` : null
   return (
     <div className={`flex ${isOwn ? "justify-end" : "justify-start"} animate-floaty`}>
       <div className={`max-w-[70%] rounded-2xl px-4 py-3 border ${isOwn ? "bg-accent/10 border-accent/40" : "bg-card border-[#1f1f1f]"}`}>
