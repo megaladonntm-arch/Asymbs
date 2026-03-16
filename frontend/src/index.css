@@ -1,0 +1,58 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: #0b0b0b;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0b0b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #252525;
+}
+
+.glow-border {
+  box-shadow: 0 0 0 1px rgba(0, 255, 156, 0.4), 0 0 20px rgba(0, 255, 156, 0.12);
+}
+
+.noise {
+  background-image:
+    radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0),
+    radial-gradient(rgba(255,255,255,0.02) 1px, transparent 0);
+  background-position: 0 0, 25px 25px;
+  background-size: 50px 50px;
+}
+
+.scanlines {
+  background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 100% 4px;
+}
+
+@keyframes floaty {
+  0% { transform: translateY(6px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.animate-floaty {
+  animation: floaty 0.4s ease-out;
+}
