@@ -1,5 +1,5 @@
 ﻿import asyncio
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import Dict, Set
 
 from fastapi import WebSocket, WebSocketDisconnect
@@ -54,10 +54,8 @@ def _get_username_from_token(token: str) -> str | None:
 
 
 def _get_recent_messages(db: Session, limit: int = 50) -> list[models.Message]:
-    now = datetime.now(timezone.utc)
     return (
         db.query(models.Message)
-        .filter(models.Message.expires_at > now)
         .order_by(models.Message.created_at.desc())
         .limit(limit)
         .all()[::-1]
@@ -106,7 +104,7 @@ async def websocket_endpoint(websocket: WebSocket, username: str) -> None:
             except ValidationError:
                 continue
 
-            now = datetime.now(timezone.utc)
+            now = datetime.utcnow()
             msg = models.Message(
                 sender_username=username,
                 content=msg_in.content,

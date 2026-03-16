@@ -1,6 +1,6 @@
 ﻿import asyncio
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,13 +43,9 @@ async def chat_ws(username: str, websocket: WebSocket):
 async def _cleanup_loop() -> None:
     while True:
         await asyncio.sleep(settings.cleanup_interval_seconds)
-        now = datetime.now(timezone.utc)
+        now = datetime.utcnow()
         db = SessionLocal()
         try:
-            expired_messages = db.query(models.Message).filter(models.Message.expires_at <= now).all()
-            for msg in expired_messages:
-                db.delete(msg)
-
             expired_files = db.query(models.FileUpload).filter(models.FileUpload.expires_at <= now).all()
             for f in expired_files:
                 try:
@@ -59,7 +55,7 @@ async def _cleanup_loop() -> None:
                     pass
                 db.delete(f)
 
-            if expired_messages or expired_files:
+            if expired_files:
                 db.commit()
         finally:
             db.close()

@@ -1,6 +1,6 @@
 ﻿import os
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from fastapi.responses import FileResponse
@@ -48,7 +48,7 @@ async def upload_file(
     finally:
         await file.close()
 
-    now = datetime.now(timezone.utc)
+    now = datetime.utcnow()
     record = models.FileUpload(
         uploader_username=current_user.username,
         original_name=file.filename,
@@ -86,7 +86,7 @@ def download_file(
     if not record:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.utcnow()
     if record.expires_at <= now:
         raise HTTPException(status_code=status.HTTP_410_GONE, detail="File expired")
 

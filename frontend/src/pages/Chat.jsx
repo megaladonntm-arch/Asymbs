@@ -50,13 +50,7 @@ export default function Chat({ token, username, onLogout }) {
     }
   }, [token, username])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = Date.now()
-      setMessages((prev) => prev.filter((m) => new Date(m.expires_at).getTime() > now))
-    }, 20000)
-    return () => clearInterval(interval)
-  }, [])
+  useEffect(() => {}, [])
 
   const filteredUsers = useMemo(() => {
     const s = search.toLowerCase()

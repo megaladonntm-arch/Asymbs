@@ -1,6 +1,6 @@
-﻿from datetime import datetime, timezone
+﻿from datetime import datetime
 
 
 def log_event(event: str) -> None:
-    ts = datetime.now(timezone.utc).isoformat()
+    ts = datetime.utcnow().isoformat()
     print(f"[{ts}] {event}")
