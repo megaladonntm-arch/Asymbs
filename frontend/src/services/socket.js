@@ -1,7 +1,11 @@
-﻿const WS_BASE = import.meta.env.VITE_WS_BASE || "wss://anon-messenger-backend-production-7c1a.up.railway.app"
+const WS_BASE = import.meta.env.VITE_WS_BASE || "wss://asymbs-production.up.railway.app"
 
-export function createSocket(username, token, onMessage, onStatus, onTyping) {
+export function createSocket(username, token, onMessage, onStatus, onTyping, onClose, onOpen) {
   const ws = new WebSocket(`${WS_BASE}/chat/${encodeURIComponent(username)}?token=${encodeURIComponent(token)}`)
+
+  ws.onopen = () => {
+    onOpen?.()
+  }
 
   ws.onmessage = (event) => {
     try {
@@ -12,6 +16,10 @@ export function createSocket(username, token, onMessage, onStatus, onTyping) {
     } catch {
       // ignore
     }
+  }
+
+  ws.onclose = (event) => {
+    onClose?.(event)
   }
 
   return ws

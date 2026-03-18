@@ -1,4 +1,4 @@
-﻿function parseFile(message) {
+function parseFile(message) {
   if (!message?.content) return null
   if (!message.content.startsWith("__file__:")) return null
   const [, id, ...nameParts] = message.content.split(":")
@@ -17,7 +17,7 @@ function isVideo(name) {
 export default function MessageBubble({ message, isOwn }) {
   const file = parseFile(message)
   const token = localStorage.getItem("token")
-  const apiBase = import.meta.env.VITE_API_BASE || "http://localhost:8000"
+  const apiBase = import.meta.env.VITE_API_BASE || "https://asymbs-production.up.railway.app"
   const downloadUrl = file ? `${apiBase}/files/${file.id}?token=${encodeURIComponent(token || "")}` : null
   return (
     <div className={`flex ${isOwn ? "justify-end" : "justify-start"} animate-floaty`}>
@@ -52,3 +52,4 @@ export default function MessageBubble({ message, isOwn }) {
     </div>
   )
 }
+

@@ -1,4 +1,4 @@
-﻿BACKEND (Railway)
+BACKEND (Railway)
 1) Deploy backend on Railway (Dockerfile in repo root).
 2) Set Environment Variables:
 - SECRET_KEY (required)
@@ -16,8 +16,8 @@ FRONTEND (Netlify)
 4) Publish directory: dist
 
 Environment variables (Netlify dashboard):
-- VITE_API_BASE=https://anon-messenger-backend-production-7c1a.up.railway.app
-- VITE_WS_BASE=wss://anon-messenger-backend-production-7c1a.up.railway.app
+- VITE_API_BASE=https://asymbs-production.up.railway.app
+- VITE_WS_BASE=wss://asymbs-production.up.railway.app
 - NODE_VERSION=20.11.1
 
 Notes:
@@ -33,3 +33,4 @@ Frontend:
 - cd frontend
 - npm install
 - npm run dev
+

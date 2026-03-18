@@ -1,4 +1,4 @@
-ï»¿import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import ChatWindow from "../components/ChatWindow.jsx"
 import FileUpload from "../components/FileUpload.jsx"
 import UserList from "../components/UserList.jsx"
@@ -16,6 +16,18 @@ export default function Chat({ token, username, onLogout }) {
 
   const wsRef = useRef(null)
   const typingTimeoutRef = useRef(null)
+  const initialLoadRef = useRef(true)
+  const initialLoadTimerRef = useRef(null)
+  const reconnectTimerRef = useRef(null)
+  const reconnectAttemptsRef = useRef(0)
+  const shouldReconnectRef = useRef(true)
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().catch(() => {})
+    }
+  }, [])
 
   useEffect(() => {
     let mounted = true
@@ -24,33 +36,87 @@ export default function Chat({ token, username, onLogout }) {
   }, [token])
 
   useEffect(() => {
-    const ws = createSocket(
-      username,
-      token,
-      (msg) => {
-        setMessages((prev) => [...prev, msg])
-        setNotification(`New message from ${msg.sender_username}`)
-        setTimeout(() => setNotification(""), 2000)
-      },
-      (status) => {
-        setOnlineUsers(status.online || [])
-      },
-      (typing) => {
-        if (typing.username && typing.username !== username) {
-          setTypingUser(typing.username)
-          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
-          typingTimeoutRef.current = setTimeout(() => setTypingUser(""), 1200)
-        }
+    shouldReconnectRef.current = true
+
+    const handleMessage = (msg) => {
+      setMessages((prev) => [...prev, msg])
+
+      const fromOther = msg.sender_username && msg.sender_username !== username
+      if (!fromOther || initialLoadRef.current) return
+
+      setNotification(`New message from ${msg.sender_username}`)
+      setTimeout(() => setNotification(""), 2000)
+
+      if (typeof window !== "undefined" && document.hidden && "Notification" in window && Notification.permission === "granted") {
+        const body = msg.content?.length > 140 ? `${msg.content.slice(0, 140)}…` : msg.content
+        const n = new Notification("New message", {
+          body: `${msg.sender_username}: ${body || ""}`
+        })
+        setTimeout(() => n.close(), 4000)
       }
-    )
-    wsRef.current = ws
+    }
+
+    const handleStatus = (status) => {
+      setOnlineUsers(status.online || [])
+    }
+
+    const handleTyping = (typing) => {
+      if (typing.username && typing.username !== username) {
+        setTypingUser(typing.username)
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+        typingTimeoutRef.current = setTimeout(() => setTypingUser(""), 1200)
+      }
+    }
+
+    const scheduleReconnect = () => {
+      if (!shouldReconnectRef.current) return
+      reconnectAttemptsRef.current += 1
+      const delay = Math.min(10000, 500 * Math.pow(2, reconnectAttemptsRef.current - 1))
+      if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
+      reconnectTimerRef.current = setTimeout(connect, delay)
+    }
+
+    const connect = () => {
+      if (!shouldReconnectRef.current) return
+      initialLoadRef.current = true
+      if (initialLoadTimerRef.current) clearTimeout(initialLoadTimerRef.current)
+
+      const ws = createSocket(
+        username,
+        token,
+        handleMessage,
+        handleStatus,
+        handleTyping,
+        (event) => {
+          if (!shouldReconnectRef.current) return
+          if (event?.code === 1008) {
+            setNotification("Session expired. Please log in again.")
+            setTimeout(() => setNotification(""), 2500)
+            shouldReconnectRef.current = false
+            onLogout?.()
+            return
+          }
+          scheduleReconnect()
+        },
+        () => {
+          reconnectAttemptsRef.current = 0
+          if (initialLoadTimerRef.current) clearTimeout(initialLoadTimerRef.current)
+          initialLoadTimerRef.current = setTimeout(() => { initialLoadRef.current = false }, 1500)
+        }
+      )
+
+      wsRef.current = ws
+    }
+
+    connect()
 
     return () => {
-      ws.close()
+      shouldReconnectRef.current = false
+      if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
+      if (initialLoadTimerRef.current) clearTimeout(initialLoadTimerRef.current)
+      wsRef.current?.close()
     }
-  }, [token, username])
-
-  useEffect(() => {}, [])
+  }, [token, username, onLogout])
 
   const filteredUsers = useMemo(() => {
     const s = search.toLowerCase()
