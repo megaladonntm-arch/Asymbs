@@ -150,7 +150,7 @@ export default function Chat({ token, username, onLogout }) {
       <div className="absolute inset-0 noise opacity-40" />
       <div className="absolute inset-0 scanlines opacity-20" />
 
-      <aside className="relative w-80 border-r border-[#1f1f1f] bg-card/60 backdrop-blur p-0">
+      <aside className="relative w-80 shrink-0 sticky top-0 h-screen border-r border-[#1f1f1f] bg-card/60 backdrop-blur p-0">
         <div className="p-4 border-b border-[#1f1f1f]">
           <div className="flex items-center justify-between">
             <div>
@@ -203,3 +203,5 @@ export default function Chat({ token, username, onLogout }) {
     </div>
   )
 }
+
+
